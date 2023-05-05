@@ -1,0 +1,7 @@
+past_code/
+.ipynb_checkpoints/
+__pycache__/
+.DS_Store
+testing.ipynb
+testing.py
+test*

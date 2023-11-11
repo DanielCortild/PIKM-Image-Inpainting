@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PIKM_Inpainter"
+version = "0.0.1"
+authors = [
+  { name="Daniel Cortild", email="d.cortild@rug.nl" },
+]
+description = "A small package to inpaint pictures according to perturbed inertial Krasnoselskii-Mann iterations."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/DanielCortild/PIKM-Image-Inpainting"
+"Bug Tracker" = "https://github.com/DanielCortild/PIKM-Image-Inpainting/issues"
+
+[options]
+install_requires = [
+    'scipy',
+    'numpy',
+    'matplotlib',
+    'tqdm',
+    'PIL'
+  ]

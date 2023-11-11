@@ -1,7 +1,3 @@
-past_code/
 .ipynb_checkpoints/
-__pycache__/
+src/PIKM_Inpainter/__pycache__/
 .DS_Store
-testing.ipynb
-testing.py
-test*

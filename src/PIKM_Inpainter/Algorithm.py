@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 # encoding: utf-8
 """
-Algorithm2.py - Implements the Algorithm
+Algorithm.py - Implements the Algorithm
 ~ Daniel Cortild, 21 March 2023
 """
 
@@ -9,6 +9,7 @@ Algorithm2.py - Implements the Algorithm
 import numpy as np
 import scipy as sp
 import scipy.linalg
+from scipy.optimize import fsolve
 from tqdm.auto import trange                # type: ignore
 import time
 
@@ -68,7 +69,7 @@ class Algorithm:
         error              Compute error estimate used for stopping criterion
     """
 
-    def __init__(self, image, mask, rho, lamb, sigma, tolerance, max_it, method, perturbed):
+    def __init__(self, image, mask, rho, lamb, sigma, tolerance, max_it, method):
         self.rho = rho
         self.lamb = lamb
         self.tolerance = tolerance
@@ -80,34 +81,20 @@ class Algorithm:
         self.proxf = lambda X: unfold(svd_shrink(fold(X, 0), rho*sigma), 0)
         self.proxg = lambda X: unfold(svd_shrink(fold(X, 1), rho*sigma), 1)
         
-        eta = 2 * lamb / (4 - rho)
-        if method == "accelerated": # beta=0
-            a = (1 - eta) - (1/eta - 1)
-            b = (1 - eta) + 2 * (1/eta - 1)
-            c =  - (1/eta - 1)
-            if abs(a) < 1e-4:
-                delta = -c / b
-            else:
-                delta = (-b + np.sqrt(b**2 - 4*a*c) ) / (2 * a)
-            alpha = (1 - eta) * delta / (1 - lamb)
-            self.get_alpha = lambda k: (1 - 1 / (k+1)) * alpha
-            self.get_beta  = lambda k: 0
-        elif method == "inertial": # alpha=beta
-            a = 1 - (1/eta - 1)
-            b = 1 + 2 * (1/eta - 1)
-            c =  - (1/eta - 1)
-            if abs(a) < 1e-4:
-                alpha = -c / b
-            else:
-                alpha = (-b + np.sqrt(b**2 - 4*a*c) ) / (2 * a)
-            self.get_alpha = lambda k: (1 - 1 / (k+1)) * alpha
-            self.get_beta  = lambda k: (1 - 1 / (k+1)) * alpha
+        if method == "static":
+            alpha = beta = 0
+        elif method == "heavyball":
+            alpha = fsolve(lambda x: lamb * x * (1+x) - (1/lamb - 1) - 1e-4, 0.5)
+            beta = 0
+        elif method == "nesterov":
+            alpha = beta = fsolve(lambda x: x * (1 + x) + (1/lamb - 1) * x * (1-x) - (1/lamb - 1) * (1-x) - 1e-4, 0.5)
+        elif method == "reflected":
+            alpha = 0
+            beta = fsolve(lambda x: (1-lamb) * x * (1+x) + (1/lamb - 1) * x * (1-x) - (1/lamb - 1) * (1-x) - 1e-4, 0.5)
         else:
-            raise ValueError("No method specified")
-            
-        self.get_epsilon = lambda k: np.random.rand(*image.shape) / (30 * (k + 1)) if perturbed else 0
-        self.get_rho     = lambda k: np.random.rand(*image.shape) / (30 * (k + 1)) if perturbed else 0
-        self.get_theta   = lambda k: np.random.rand(*image.shape) / (30 * (k + 1)) if perturbed else 0
+            raise ValueError("No correct method specified")
+        self.get_alpha = lambda k: (1 - 1 / (k+1)) * alpha
+        self.get_beta  = lambda k: (1 - 1 / (k+1)) * beta
         
         self.X_corrupt = image.copy()
         self.F = lambda X: np.linalg.norm(X-self.X_corrupt)**2/2 + sigma * nuc_norm(X)
@@ -118,16 +105,13 @@ class Algorithm:
         """
         alpha    = self.get_alpha(k)
         beta     = self.get_beta(k)
-        epsilon  = self.get_epsilon(k)
-        rho      = self.get_rho(k)
-        theta    = self.get_theta(k)
         lambd    = self.lamb
         
-        Y       = X_actual + alpha * (X_actual - X_previous) + epsilon
-        Z       = X_actual + beta * (X_actual - X_previous) + rho
+        Y       = X_actual + alpha * (X_actual - X_previous)
+        Z       = X_actual + beta * (X_actual - X_previous)
         X_g     = self.proxg(Z)
         X_T     = Z - X_g + self.proxf(2 * X_g - Z - self.rho * (self.A(X_g) - self.X_corrupt))
-        X_next  = (1 - lambd) * Y + lambd * X_T + theta
+        X_next  = (1 - lambd) * Y + lambd * X_T
         
         return X_actual, X_next, X_T
 

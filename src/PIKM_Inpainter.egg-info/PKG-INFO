@@ -1,3 +1,17 @@
+Metadata-Version: 2.1
+Name: PIKM-Inpainter
+Version: 0.0.1
+Summary: A small package to inpaint pictures according to perturbed inertial Krasnoselskii-Mann iterations.
+Author-email: Daniel Cortild <d.cortild@rug.nl>
+Project-URL: Homepage, https://github.com/DanielCortild/PIKM-Image-Inpainting
+Project-URL: Bug Tracker, https://github.com/DanielCortild/PIKM-Image-Inpainting/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
 # Perturbed Inertial KM Iterations for Image Inpainting
 
 This package provides functions to execute *perturbed inertial Krasnoselskii-Mann iterations* to solve the image inpainting problem.

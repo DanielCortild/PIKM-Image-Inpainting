@@ -14,6 +14,9 @@ The package is available through pip, and may be installed via:
 pip install PIKM_Inpainter
 ```
 
+## Setup
+In order to run the package, an image is required. The image must imperatively be called `Venice.jpeg`, and be placed in the same folder as the code is executed. Examples may be found in `/tests`.
+
 ## Main Usage
 To utilize this package, you can call the `getInpainted` function:
 ```

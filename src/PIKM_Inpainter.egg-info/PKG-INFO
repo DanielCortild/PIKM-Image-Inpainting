@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: PIKM-Inpainter
-Version: 0.0.1
+Version: 0.0.2
 Summary: A small package to inpaint pictures according to perturbed inertial Krasnoselskii-Mann iterations.
 Author-email: Daniel Cortild <d.cortild@rug.nl>
 Project-URL: Homepage, https://github.com/DanielCortild/PIKM-Image-Inpainting
@@ -27,6 +27,9 @@ The package is available through pip, and may be installed via:
 ```
 pip install PIKM_Inpainter
 ```
+
+## Setup
+In order to run the package, an image is required. The image must imperatively be called `Venice.jpeg`, and be placed in the same folder as the code is executed. Examples may be found in `/tests`.
 
 ## Main Usage
 To utilize this package, you can call the `getInpainted` function:

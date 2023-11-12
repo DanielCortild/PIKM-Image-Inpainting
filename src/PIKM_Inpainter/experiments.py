@@ -126,7 +126,7 @@ def plotExperiments(rho, sigma, lamb, percent):
     # Get number of tests
     if type(rho) in [list, np.ndarray]:
         N = len(rho)
-        rhos = rho
+        parameters = rhos = rho
         sigmas = [sigma] * N
         lambs = [lamb] * N
         percents = [percent] * N
@@ -135,7 +135,7 @@ def plotExperiments(rho, sigma, lamb, percent):
     elif type(sigma) in [list, np.ndarray]:
         N = len(sigma)
         rhos = [rho] * N
-        sigmas = sigma
+        parameters = sigmas = sigma
         lambs = [lamb] * N
         percents = [percent] * N
         xAxis = r"Regularisation parameter ($\sigma$)"
@@ -144,7 +144,7 @@ def plotExperiments(rho, sigma, lamb, percent):
         N = len(lamb)
         rhos = [rho] * N
         sigmas = [sigma] * N
-        lambs = lamb
+        parameters = lambs = lamb
         percents = [percent] * N
         xAxis = r"Relaxation parameter ($\lambda$)"
         title = "Analysis on the relaxation parameter"
@@ -153,7 +153,7 @@ def plotExperiments(rho, sigma, lamb, percent):
         rhos = [rho] * N
         sigmas = [sigma] * N
         lambs = [lamb] * N
-        percents = percent
+        parameters = percents = percent
         xAxis = "Percentage of erased pixels"
         title = "Analysis on the percentage of erased pixels"
     else:

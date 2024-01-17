@@ -63,7 +63,7 @@ def getInpainted(rho, sigma, lamb, percent):
     axs[0,1].set_axis_off()
     axs[0,1].set_facecolor("white")
 
-    axs[0,2].title.set_text("Static")
+    axs[0,2].title.set_text("Non-Inertial")
     axs[0,2].imshow(sol_S, vmin=0, vmax=1)
     axs[0,2].set_axis_off()
     axs[0,2].set_facecolor("white")
@@ -97,7 +97,7 @@ def getInpainted(rho, sigma, lamb, percent):
 
     axs[0].title.set_text("$|X_k-X_{k-1}|^2$")
     l1 = axs[0].plot([np.linalg.norm(hist_S[i] - hist_S[i-1])**2 for i in range(1, len(hist_S))], 
-                        label="Static")
+                        label="Non-Inertial")
     l2 = axs[0].plot([np.linalg.norm(hist_H[i] - hist_H[i-1])**2 for i in range(1, len(hist_H))], 
                         label="Heavy Ball")
     l3 = axs[0].plot([np.linalg.norm(hist_N[i] - hist_N[i-1])**2 for i in range(1, len(hist_N))], 
@@ -109,7 +109,7 @@ def getInpainted(rho, sigma, lamb, percent):
 
     axs[1].title.set_text(r"$|T_kX_k-X_{k}|^2$")
     axs[1].plot([np.linalg.norm(hist_T_S[i] - hist_S[i])**2 for i in range(1, len(hist_S))], 
-                label="Static")
+                label="Non-Inertial")
     axs[1].plot([np.linalg.norm(hist_T_H[i] - hist_H[i])**2 for i in range(1, len(hist_H))], 
                 label="Heavy Ball")
     axs[1].plot([np.linalg.norm(hist_T_N[i] - hist_N[i])**2 for i in range(1, len(hist_N))], 
@@ -121,7 +121,7 @@ def getInpainted(rho, sigma, lamb, percent):
 
     axs[2].title.set_text(r"$|X_k-X^*|^2$")
     axs[2].plot([np.linalg.norm(hist_S[i] - image.image)**2 for i in range(1, len(hist_S))], 
-                label="Static")
+                label="Non-Inertial")
     axs[2].plot([np.linalg.norm(hist_H[i] - image.image)**2 for i in range(1, len(hist_H))], 
                 label="Heavy Ball")
     axs[2].plot([np.linalg.norm(hist_N[i] - image.image)**2 for i in range(1, len(hist_N))], 
@@ -131,9 +131,9 @@ def getInpainted(rho, sigma, lamb, percent):
     axs[2].set_yscale('log')
     axs[2].set_xlabel("Iteration (k)")
 
-    axs[3].title.set_text(r"$|F(X_k)-X^*|^2$")
+    axs[3].title.set_text(r"$|F(X_k)-F^*|^2$")
     axs[3].plot([np.linalg.norm(hist_F_S[i] - F_S(image.image))**2 for i in range(1, len(hist_S))], 
-                label="Static")
+                label="Non-Inertial")
     axs[3].plot([np.linalg.norm(hist_F_H[i] - F_H(image.image))**2 for i in range(1, len(hist_H))], 
                 label="Heavy Ball")
     axs[3].plot([np.linalg.norm(hist_F_N[i] - F_N(image.image))**2 for i in range(1, len(hist_N))], 
@@ -144,7 +144,7 @@ def getInpainted(rho, sigma, lamb, percent):
     axs[3].set_xlabel("Iteration (k)")
 
     fig.legend([l1, l2, l3, l4], 
-            labels=["Static", "Heavy-Ball", "Nesterov", "Reflected"],
+            labels=["Non-Inertial", "Heavy-Ball", "Nesterov", "Reflected"],
                 loc='lower center', 
                 bbox_to_anchor=(0.5, -0.18),
                 ncol=4)

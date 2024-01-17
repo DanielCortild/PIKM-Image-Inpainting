@@ -16,7 +16,7 @@ from .Mask import Mask
 from .Algorithm import Algorithm
 
 # Running Algoroithm
-def runAlgorithm(rho, lamb, sigma, percent, tolerance, max_it, method):
+def runAlgorithm(rho, lamb, sigma, percent, tolerance, max_it, method, nb_tests=1):
     """
     Runs the algorithm given different parameters.
     Input:
@@ -35,10 +35,14 @@ def runAlgorithm(rho, lamb, sigma, percent, tolerance, max_it, method):
     image.load_image("Venice.jpeg")
     mask = Mask(percentage=percent, dims=(512, 512))
     image_corrupt = mask.mask_image(image.image)
-    _, _, _, _, its, time, _ = Algorithm(image_corrupt, mask, rho, lamb, sigma, 
-                                         tolerance, max_it, method).run(False, False)
+    its_total, time_total = 0, 0
+    for _ in range(nb_tests):
+        _, _, _, _, its, time, _ = Algorithm(image_corrupt, mask, rho, lamb, sigma, 
+                                            tolerance, max_it, method).run(False, False)
+        its_total += its
+        time_total += time
         
-    return its, time
+    return its_total / nb_tests, time_total / nb_tests
 
 # Error Plots
 def plotItsTime(parameters, max_it, its_S, its_H, its_N, its_R, 
@@ -92,7 +96,7 @@ def plotItsTime(parameters, max_it, its_S, its_H, its_N, its_R,
 
     plt.show()
 
-def plotExperiments(rho, sigma, lamb, percent):
+def plotExperiments(rho, sigma, lamb, percent, nb_tests=1):
     """
     Plots the results of an experiment based on different parameters.
     Input:
@@ -100,6 +104,7 @@ def plotExperiments(rho, sigma, lamb, percent):
         sigma       Regularisation parameter (Float or list of floats)
         lamb        Relaxation parameter (Float or list of floats)
         percent     Percentage of erased pixels (Float or list of floats)
+        nb_tests    Number of times the experiment is run (Int)
     Output:
         its_S       List of iterations required for static
         its_H       List of iterations required for heavy-ball
@@ -172,13 +177,13 @@ def plotExperiments(rho, sigma, lamb, percent):
     # Run the Algorithm
     for i, (rho, sigma, lamb, percent) in enumerate(tqdm(zip(rhos, sigmas, lambs, percents))):
         its_S[i], time_S[i] = runAlgorithm(rho, lamb, sigma, percent,
-                                  tolerance, max_it, method="static")
+                                  tolerance, max_it, method="static", nb_tests=nb_tests)
         its_H[i], time_H[i] = runAlgorithm(rho, lamb, sigma, percent,
-                                    tolerance, max_it, method="heavyball")
+                                    tolerance, max_it, method="heavyball", nb_tests=nb_tests)
         its_N[i], time_N[i] = runAlgorithm(rho, lamb, sigma, percent,
-                                    tolerance, max_it, method="nesterov")
+                                    tolerance, max_it, method="nesterov", nb_tests=nb_tests)
         its_R[i], time_R[i] = runAlgorithm(rho, lamb, sigma, percent,
-                                    tolerance, max_it, method="reflected")
+                                    tolerance, max_it, method="reflected", nb_tests=nb_tests)
 
     # Plot the results
     plotItsTime(parameters, max_it, its_S, its_H, its_N, its_R, 

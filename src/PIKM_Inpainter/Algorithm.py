@@ -69,17 +69,26 @@ class Algorithm:
         error              Compute error estimate used for stopping criterion
     """
 
-    def __init__(self, image, mask, rho, lamb, sigma, tolerance, max_it, method):
+    def __init__(self, image, mask, rho, lamb, sigma, tolerance, max_it, method, res="rel"):
         self.rho = rho
         self.lamb = lamb
         self.tolerance = tolerance
         self.max_it = max_it
         self.sigma = sigma
         
-        self.R = lambda X1, X0: np.linalg.norm(X1 - X0) / np.linalg.norm(X0)
-        self.A = lambda X: mask.mask_image(X)
         self.proxf = lambda X: unfold(svd_shrink(fold(X, 0), rho*sigma), 0)
         self.proxg = lambda X: unfold(svd_shrink(fold(X, 1), rho*sigma), 1)
+        self.A = lambda X: mask.mask_image(X)
+        def T(X):
+            X_g = self.proxg(X)
+            return X - X_g + self.proxf(2 * X_g - X - self.rho * (self.A(X_g) - self.X_corrupt))
+        self.T = T
+        if res == "rel":
+            self.R = lambda X1, X0: np.linalg.norm(X1 - X0) / np.linalg.norm(X0)
+        elif res == "Tx-x":
+            self.R = lambda X1, X0: np.linalg.norm(self.T(X1) - X1)
+        else:
+            raise ValueError(f"Residual {res} not implemented")
         
         if method == "static":
             alpha = beta = 0

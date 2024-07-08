@@ -16,7 +16,7 @@ from .Mask import Mask
 from .Algorithm import Algorithm
 
 # Running Algoroithm
-def runAlgorithm(rho, lamb, sigma, percent, tolerance, max_it, method, nb_tests=1):
+def runAlgorithm(rho, lamb, sigma, percent, tolerance, max_it, method, res="rel", nb_tests=1):
     """
     Runs the algorithm given different parameters.
     Input:
@@ -27,6 +27,8 @@ def runAlgorithm(rho, lamb, sigma, percent, tolerance, max_it, method, nb_tests=
         tolerance   Stopping tolerance
         max_it      Maximum number of iterations
         method      Acceleration method selected
+        res         Type of residual
+        nb_tests    Number of times the experiment is run (Int)
     Output:
         its         Iterations required to run the algorithm
         time        Time required to run the algorithm
@@ -38,7 +40,7 @@ def runAlgorithm(rho, lamb, sigma, percent, tolerance, max_it, method, nb_tests=
     its_total, time_total = 0, 0
     for _ in range(nb_tests):
         _, _, _, _, its, time, _ = Algorithm(image_corrupt, mask, rho, lamb, sigma, 
-                                            tolerance, max_it, method).run(False, False)
+                                            tolerance, max_it, method, res).run(False, False)
         its_total += its
         time_total += time
         
@@ -75,7 +77,7 @@ def plotItsTime(parameters, max_it, its_S, its_H, its_N, its_R,
     fig, axs = plt.subplots(1, 2, figsize=(14, 3.5), dpi=600)
 
     axs[0].title.set_text("Iterations to reach $10^{-3}$ tolerance")
-    axs[0].plot(parameters, its_S, label="Static")
+    axs[0].plot(parameters, its_S, label="Non-Inertial")
     axs[0].plot(parameters, its_H, label="Heavy-Ball")
     axs[0].plot(parameters, its_N, label="Nesterov")
     axs[0].plot(parameters, its_R, label="Reflected")
@@ -85,7 +87,7 @@ def plotItsTime(parameters, max_it, its_S, its_H, its_N, its_R,
     axs[0].legend()
 
     axs[1].title.set_text("Time to reach $10^{-3}$ tolerance")
-    axs[1].plot(parameters, time_S, label="Static")
+    axs[1].plot(parameters, time_S, label="Non-Inertial")
     axs[1].plot(parameters, time_H, label="Heavy-Ball")
     axs[1].plot(parameters, time_N, label="Nesterov")
     axs[1].plot(parameters, time_R, label="Reflected")
@@ -96,7 +98,7 @@ def plotItsTime(parameters, max_it, its_S, its_H, its_N, its_R,
 
     plt.show()
 
-def plotExperiments(rho, sigma, lamb, percent, nb_tests=1):
+def plotExperiments(rho, sigma, lamb, percent, res="rel", nb_tests=1):
     """
     Plots the results of an experiment based on different parameters.
     Input:
@@ -104,6 +106,7 @@ def plotExperiments(rho, sigma, lamb, percent, nb_tests=1):
         sigma       Regularisation parameter (Float or list of floats)
         lamb        Relaxation parameter (Float or list of floats)
         percent     Percentage of erased pixels (Float or list of floats)
+        res         Type of residual
         nb_tests    Number of times the experiment is run (Int)
     Output:
         its_S       List of iterations required for static
@@ -177,13 +180,13 @@ def plotExperiments(rho, sigma, lamb, percent, nb_tests=1):
     # Run the Algorithm
     for i, (rho, sigma, lamb, percent) in enumerate(tqdm(zip(rhos, sigmas, lambs, percents))):
         its_S[i], time_S[i] = runAlgorithm(rho, lamb, sigma, percent,
-                                  tolerance, max_it, method="static", nb_tests=nb_tests)
+                                  tolerance, max_it, method="static", res=res, nb_tests=nb_tests)
         its_H[i], time_H[i] = runAlgorithm(rho, lamb, sigma, percent,
-                                    tolerance, max_it, method="heavyball", nb_tests=nb_tests)
+                                    tolerance, max_it, method="heavyball", res=res, nb_tests=nb_tests)
         its_N[i], time_N[i] = runAlgorithm(rho, lamb, sigma, percent,
-                                    tolerance, max_it, method="nesterov", nb_tests=nb_tests)
+                                    tolerance, max_it, method="nesterov", res=res, nb_tests=nb_tests)
         its_R[i], time_R[i] = runAlgorithm(rho, lamb, sigma, percent,
-                                    tolerance, max_it, method="reflected", nb_tests=nb_tests)
+                                    tolerance, max_it, method="reflected", res=res, nb_tests=nb_tests)
 
     # Plot the results
     plotItsTime(parameters, max_it, its_S, its_H, its_N, its_R, 
@@ -191,7 +194,7 @@ def plotExperiments(rho, sigma, lamb, percent, nb_tests=1):
 
     return its_S, its_H, its_N, its_R, time_S, time_H, time_N, time_R
 
-def plotExperimentRegularisation(rho, sigmas, lamb, percent, method):
+def plotExperimentRegularisation(rho, sigmas, lamb, percent, method, res="rel"):
     """
     Plots different images for different regularisation parameters.
     Input:
@@ -200,6 +203,7 @@ def plotExperimentRegularisation(rho, sigmas, lamb, percent, method):
         lamb        Regularisation parameter selected
         percent     Percentage of erased pixels selected 
         method      Acceleration method chosen
+        res         Type of residual
     Output:
         None
     """
@@ -224,7 +228,7 @@ def plotExperimentRegularisation(rho, sigmas, lamb, percent, method):
     sols = [None] * len(sigmas)
     for i, sigma in enumerate(tqdm(sigmas)):
         sols[i] = Algorithm(image_corrupt, mask, rho, lamb, sigma, 
-                            tolerance, max_it, method=method).run()[0]
+                            tolerance, max_it, res=res, method=method).run()[0]
 
     # Plot Original and Result
     fig, axs = plt.subplots(2, 4, figsize=(12, 6), dpi=100)

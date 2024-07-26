@@ -20,7 +20,7 @@ In order to run the package, an image is required. The image must imperatively b
 ## Main Usage
 To utilize this package, you can call the `getInpainted` function:
 ```
-getInpainted(rho, sigma, lamb, percent)
+getInpainted(rho, sigma, lamb, percent, res)
 ```
 
 ### Parameters:
@@ -28,6 +28,7 @@ getInpainted(rho, sigma, lamb, percent)
 - **sigma** (_float_): Regularisation parameter, positive number.
 - **lamb** (_float_): Relaxation parameter, in the interval (0,1).
 - **percent** (_float_): Percentage of pixels erased randomly in the image, in the interval (0,1).
+- **res** (_string_): Type of residual (`"rel"` for relative residual, `"Tx-x"` for pointwise residual)
 
 ### Returns:
 - None
@@ -35,7 +36,7 @@ getInpainted(rho, sigma, lamb, percent)
 ## Running Experiments
 Experiments are pre-coded in the library, through the function `plotExperiments`.
 ```
-plotExperiments(rho, sigma, lamb, percent)
+plotExperiments(rho, sigma, lamb, percent, res)
 ```
 
 ### Parameters:
@@ -44,6 +45,7 @@ One of the parameters should be a list of parameters, which will determine the e
 - **sigma** (_float_): Regularisation parameter, positive number.
 - **lamb** (_float_): Relaxation parameter, in the interval (0,1).
 - **percent** (_float_): Percentage of pixels erased randomly in the image, in the interval (0,1).
+- **res** (_string_): Type of residual (`"rel"` for relative residual, `"Tx-x"` for pointwise residual)
 
 ### Output:
 * **its_S** (_list_): List of iterations required for static.
@@ -58,7 +60,7 @@ One of the parameters should be a list of parameters, which will determine the e
 ## Experiment on Regularisation Parameter
 A specific type of experiment may be run on the regularisation parameter, through the function `plotExperimentRegularisation`.
 ```
-plotExperimentRegularisation(rho, sigmas, lamb, percent, method)
+plotExperimentRegularisation(rho, sigmas, lamb, percent, method, res)
 ```
 
 ### Parameters:
@@ -67,17 +69,18 @@ plotExperimentRegularisation(rho, sigmas, lamb, percent, method)
 - **lamb** (_float_): Relaxation parameter, in the interval (0,1).
 - **percent** (_float_): Percentage of pixels erased randomly in the image, in the interval (0,1).
 - **method** (_string_): The chosen acceleration method. Must be one of `"static"`, `"heavyball"`, `"nesterov"` or `"reflected"`.
+- **res** (_string_): Type of residual (`"rel"` for relative residual, `"Tx-x"` for pointwise residual)
 
 ## Example
 
 ```
 from PIKM_Inpainter import getInpainted
-getInpainted(rho=1.8, sigma=.5, lamb=.8, percent=.5)
+getInpainted(rho=1.8, sigma=.5, lamb=.8, percent=.5, res="Tx-x")
 ```
 
 In this example we select a step size $\rho=1.8$, a regularisation parameter $\sigma=0.5$, a relaxation parameter $\lambda=0.8$, and a percentage of erased pixels of $50\%$.
 
 This produces the result in the following two figures.
 
-![](https://github.com/DanielCortild/PIKM-Image-Inpainting/blob/master/output.png?raw=true)
-![](https://github.com/DanielCortild/PIKM-Image-Inpainting/blob/master/output2.png?raw=true)
+![](https://github.com/DanielCortild/PIKM-Image-Inpainting/blob/master/plots/all_Tx-x.png?raw=true)
+![](https://github.com/DanielCortild/PIKM-Image-Inpainting/blob/master/plots/residuals_Tx-x.png?raw=true)

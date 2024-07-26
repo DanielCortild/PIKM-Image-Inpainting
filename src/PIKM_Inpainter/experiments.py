@@ -9,6 +9,8 @@ experiments.py - Implements the experiments about the different parameters
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm.auto import tqdm
+import time
+import os
 
 # Internal Imports
 from .Image import Image
@@ -48,7 +50,7 @@ def runAlgorithm(rho, lamb, sigma, percent, tolerance, max_it, method, res="rel"
 
 # Error Plots
 def plotItsTime(parameters, max_it, its_S, its_H, its_N, its_R, 
-                  time_S, time_H, time_N, time_R, xlabel, title):
+                  time_S, time_H, time_N, time_R, xlabel, title, tol="10^{-3}"):
     """
     Plots the results of an experiment given the results.
     Input:
@@ -76,9 +78,9 @@ def plotItsTime(parameters, max_it, its_S, its_H, its_N, its_R,
     
     fig, axs = plt.subplots(1, 2, figsize=(14, 3.5), dpi=600)
 
-    axs[0].title.set_text("Iterations to reach $10^{-3}$ tolerance")
+    axs[0].title.set_text(f"Iterations to reach ${tol}$ tolerance")
     axs[0].plot(parameters, its_S, label="Non-Inertial")
-    axs[0].plot(parameters, its_H, label="Heavy-Ball")
+    axs[0].plot(parameters, its_H, label="Heavy Ball")
     axs[0].plot(parameters, its_N, label="Nesterov")
     axs[0].plot(parameters, its_R, label="Reflected")
     axs[0].axhline(y=max_it, color="r", label="Did Not Converge", linestyle="--")
@@ -86,9 +88,9 @@ def plotItsTime(parameters, max_it, its_S, its_H, its_N, its_R,
     axs[0].set_xlabel(xlabel)
     axs[0].legend()
 
-    axs[1].title.set_text("Time to reach $10^{-3}$ tolerance")
+    axs[1].title.set_text(f"Time to reach ${tol}$ tolerance")
     axs[1].plot(parameters, time_S, label="Non-Inertial")
-    axs[1].plot(parameters, time_H, label="Heavy-Ball")
+    axs[1].plot(parameters, time_H, label="Heavy Ball")
     axs[1].plot(parameters, time_N, label="Nesterov")
     axs[1].plot(parameters, time_R, label="Reflected")
     axs[1].axhline(y=max_time, color="r", label="Did Not Converge", linestyle="--")
@@ -96,7 +98,16 @@ def plotItsTime(parameters, max_it, its_S, its_H, its_N, its_R,
     axs[1].set_xlabel(xlabel)
     axs[1].legend()
 
-    plt.show()
+    # Save plot as file
+    try:
+        t = time.time()
+        print(f"Saving file to ./plots/{t}.png")
+        if not os.path.exists("plots"):
+            os.makedirs("plots")
+        plt.savefig(f"plots/{t}.png", bbox_inches='tight')
+        plt.show()
+    except Exception as e:
+        print(f"ERROR: {e}")
 
 def plotExperiments(rho, sigma, lamb, percent, res="rel", nb_tests=1):
     """
@@ -106,7 +117,7 @@ def plotExperiments(rho, sigma, lamb, percent, res="rel", nb_tests=1):
         sigma       Regularisation parameter (Float or list of floats)
         lamb        Relaxation parameter (Float or list of floats)
         percent     Percentage of erased pixels (Float or list of floats)
-        res         Type of residual
+        res         Type of residual ("rel" or "Tx-x")
         nb_tests    Number of times the experiment is run (Int)
     Output:
         its_S       List of iterations required for static
@@ -123,7 +134,7 @@ def plotExperiments(rho, sigma, lamb, percent, res="rel", nb_tests=1):
     image.load_image("Venice.jpeg")
 
     # Universal Parameters
-    tolerance = 1e-3
+    tolerance = 1e-3 if res == "rel" else 0.5
     max_it = 100
 
     # Check parameters
@@ -215,7 +226,7 @@ def plotExperimentRegularisation(rho, sigmas, lamb, percent, method, res="rel"):
         raise ValueError("List `sigmas` should contain 6 elements exactly.")
 
     # Universal Parameters
-    tolerance = 1e-3
+    tolerance = 1e-3 if res == "rel" else 0.5
     max_it = 100
 
     # Import the Image
@@ -273,4 +284,13 @@ def plotExperimentRegularisation(rho, sigmas, lamb, percent, method, res="rel"):
     axs[1,3].set_axis_off()
     axs[1,3].set_facecolor("white")
 
-    plt.show()
+    # Save plot as file
+    try:
+        t = time.time()
+        print(f"Saving file to ./plots/{t}.png")
+        if not os.path.exists("plots"):
+            os.makedirs("plots")
+        plt.savefig(f"plots/{t}.png", bbox_inches='tight')
+        plt.show()
+    except Exception as e:
+        print(f"ERROR: {e}")

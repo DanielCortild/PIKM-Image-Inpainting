@@ -1,3 +1,4 @@
 .ipynb_checkpoints/
 src/PIKM_Inpainter/__pycache__/
 .DS_Store
+/tests/data

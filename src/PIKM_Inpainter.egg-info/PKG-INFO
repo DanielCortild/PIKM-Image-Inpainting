@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: PIKM_Inpainter
-Version: 0.0.4
+Version: 0.0.5
 Summary: A small package to inpaint pictures according to perturbed inertial Krasnoselskii-Mann iterations.
 Author-email: Daniel Cortild <d.cortild@rug.nl>
 Project-URL: Homepage, https://github.com/DanielCortild/PIKM-Image-Inpainting
@@ -16,9 +16,9 @@ License-File: LICENSE
 
 This package provides functions to execute *perturbed inertial Krasnoselskii-Mann iterations* to solve the image inpainting problem.
 
-This code is related to my Bachelor Thesis on the topic of *perturbed inertial Krasnoselskii-Mann iterations*. In this thesis, I devise an inertial framework to accelerate the convergence of the standard KM iterations, and apply this algorithm to the image *inpainting problem*. This problem consists of reconstructing an image after part of it has been deleted (in this case a number of random pixels).
+This code is related to my Bachelor Thesis on the topic of *perturbed inertial Krasnoselskii-Mann iterations*. In this thesis, I devise an inertial framework to accelerate the convergence of the standard KM iterations, and apply this algorithm to the image *inpainting problem*. This problem consists of reconstructing an image after part of it has been deleted (in this case a number of random pixels). The full text is available via [this link](http://dx.doi.org/10.13140/RG.2.2.15082.49601).
 
-The full text is available via [this link](http://dx.doi.org/10.13140/RG.2.2.15082.49601).
+After more careful analysis the work gave rise to a paper, on the same topic. The preprint of this work may be found on [ArXiV](https://arxiv.org/abs/2401.16870).
 
 ## Installation
 
